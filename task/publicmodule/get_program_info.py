@@ -11,7 +11,6 @@ def get_program_info(target_program: str) -> dict:
     
     # 默认返回格式
     result = {'pid': '0', 'hwnd': 'none', 'match': False}
-    
     # 遍历所有进程
     for proc in psutil.process_iter(['pid', 'name']):
         try:
