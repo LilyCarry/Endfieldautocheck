@@ -19,8 +19,8 @@ def opencv_compare(input_data: list) -> list:
     # 获取当前文件所在目录 (publicmodule)
     base_dir = os.path.dirname(os.path.abspath(__file__))
     # 定位 target_pic 和 sc 文件夹
-    target_dir = os.path.abspath(os.path.join(base_dir, "..", "target_pic"))
-    sc_dir = os.path.abspath(os.path.join(base_dir, "..", "sc"))
+    target_dir = os.path.abspath(os.path.join(base_dir, "..", "..", "target_pic"))
+    sc_dir = os.path.abspath(os.path.join(base_dir, "..","..", "sc"))
     
     target_path = os.path.join(target_dir, input_data[0])
     sc_path = os.path.join(sc_dir, input_data[1])
@@ -102,12 +102,13 @@ def opencv_compare(input_data: list) -> list:
 
 # --- Debug 测试代码 ---
 if __name__ == "__main__":
-    # 模拟输入数据
-    # 假设你 sc 文件夹下有一个 1.png，target_pic 下有一个 2.png
+    source = input('输入目标小图')
+    target = input('输入大图')
+    val = float(input('输入精度'))
     test_input = [
-        "20260207_2155.png",      # 目标小图
-        "20260207_2155.png",    # 截图大图
-        0.5,                    # 精度
+        f"{source}",      # 目标小图
+        f"{target}",    # 截图大图
+        val,                    # 精度
         0,                      # 灰度开关
         [[None, None], [None, None]] # 区域限制
     ]
