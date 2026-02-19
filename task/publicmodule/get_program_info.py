@@ -5,6 +5,7 @@ import win32process
 def get_program_info(target_program: str) -> dict:
     """
     根据目标程序名关键字，获取第一个匹配且拥有可见窗口的程序的 PID 和 HWND。
+    传参:str
     """
     # 强制将输入转为小写
     search_name = target_program.lower()

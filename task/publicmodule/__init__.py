@@ -1,3 +1,0 @@
-import capture_screen
-import opencv_compare
-import execute_task
