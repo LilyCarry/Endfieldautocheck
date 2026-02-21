@@ -13,7 +13,7 @@ def main():
     current_time=0#这里记得改config
     while current_time<=max_time:#记得控制运行次数
         print(f'运行第{current_time}次:')
-        subprocess.run([path,"--nogui","--xxmi","EFMI"])
+        subprocess.run([path])
         print(f'等待{wait_time_s}秒')
         time.sleep(wait_time_s)
         current_time+=1

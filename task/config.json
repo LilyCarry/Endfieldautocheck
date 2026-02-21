@@ -3,5 +3,5 @@
     "run_max_time":1,
     "wait_time_s":40,
     "task_st":["run_launcher","login","daily_check","quit_game"],
-    "launcher_path":"C://Users//Carry//AppData//Roaming//XXMI Launcher//Resources//Bin//XXMI Launcher.exe"
+    "launcher_path":"C:/Endfield Game/Endfield.exe"
 }
