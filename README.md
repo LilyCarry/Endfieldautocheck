@@ -3,7 +3,9 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-pending-orange.svg)]()
 [![Status](https://img.shields.io/badge/status-pre--alpha-orange.svg)]()
->**注意!** 这是一个随便写的练手项目 自用  
+>**注意!** 这是一个随便写的练手项目 **自用**  
+>**不建议任何人使用,源码仅供研究,写的是屎山**
+>**写出来主要是提醒各位大佬:该写终末地自动化了!!!**
 理论上只适用于安装了EFMI mod的版本  
 ~~,因为其有快速启动的传参.~~*(不过好像本来也可以)*  
 ===
