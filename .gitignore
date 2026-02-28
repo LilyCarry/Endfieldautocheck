@@ -1,2 +1,3 @@
 #忽略sc
 sc/*
+!sc/*.gitkeep

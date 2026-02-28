@@ -16,7 +16,7 @@ from pynput.mouse import Controller, Button
 mouse = Controller()
 
 
-def click(pos, mode='click', times=1, target_pos=None):
+def click(pos, mode='click', times=1, target_pos=None, lag=1):
     """
     鼠标控制函数 - 支持点击、多次点击和拖动
     
@@ -29,6 +29,7 @@ def click(pos, mode='click', times=1, target_pos=None):
             - mode='click'时: 点击times次
             - mode='drag'时: 重复拖动times次
         target_pos (list/None): [tx, ty] 目标位置，仅在mode='drag'时需要
+        lag:每次操作延迟秒 (int)
     
     返回:
         bool: 操作是否成功

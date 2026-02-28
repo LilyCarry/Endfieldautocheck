@@ -17,6 +17,7 @@ from task.publicmodule import click
 from task.publicmodule import opencv_compare as compare
 from task.publicmodule import get_program_info
 from task.publicmodule import check_exist
+from task import quit_game
 
 def main():
     config = read_config()
@@ -33,14 +34,22 @@ def main():
             print(f"截图,路径{capture_result[1]}")
             compare_result = compare.opencv_compare(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])
             current_time_1 = 0
-            while not compare_result[0] and current_time_1 <= 10:
+            while current_time_1 <= 10:
                 compare_result = compare.opencv_compare(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])
                 print('正在等待游戏就绪')
                 print(f'次数:第{current_time_1+1}次')
-                time.sleep(60)
+                if not compare_result[0]:
+                    time.sleep(60)
+                else:
+                    break
             else:
                 print('超时!')
                 print('出现问题,正在退出')
-
+                return [False,"超时!"]
+            print('成功进入等待页面')
+            click.click(pos=compare_result[1],mode='click',times=5,lag=1)
+        else:
+            print('未知错误!')
+            return [False,"似乎是capture_result出错了!"]
 if __name__ == '__main__':
     main()
