@@ -1,3 +1,17 @@
-#忽略sc
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 带 test 的 py 文件（不上传）
+*test*.py
+
+# 环境变量
+.env
+
+# 日志
+*.log
+
+# 截图缓存（如果 sc 里除了 .gitkeep 都不要）
 sc/*
-!sc/*.gitkeep
+!sc/.gitkeep
