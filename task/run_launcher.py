@@ -27,7 +27,7 @@ def main():
     
     while current_time <= run_max_time:
         print(f'运行第 {current_time} 次:')
-        subprocess.run([path], shell=True)
+        subprocess.Popen([path])
         print(f'等待 {wait_time_s} 秒')
         time.sleep(wait_time_s)
         current_time += 1

@@ -7,6 +7,7 @@ import win32gui
 import win32ui
 import win32con
 import win32api
+import time
 from PIL import Image
 
 def capture_screen() -> list:
@@ -70,5 +71,6 @@ def capture_screen() -> list:
 # --- Debug 测试代码 ---
 if __name__ == "__main__":
     print("正在尝试全屏截图...")
+    time.sleep(3)
     res = capture_screen()
     print(f"结果: {res}")

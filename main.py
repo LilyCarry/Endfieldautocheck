@@ -16,7 +16,6 @@ from task.publicmodule.read_config import read_config
 #下面是初始化:
 main_config=read_config()
 task_st=main_config['task_st']
-launcher_result=run_launcher.main()
 #清除sc缓存
 
 def clean_sc_folder(folder_path="sc"):
@@ -63,6 +62,9 @@ clean_sc_folder()
 #防出错自寻:截图.根据界面特殊图片检测当前所处界面.如果有弹窗,检测弹窗是否有'网络'或Network字样,若有,判断为网卡,直接退出.
 #接着,想办法回到正确的那个地方.这个自寻应该作为一个保底,在每个功能模块无法正确识别时,出现不在预期内的结果时,调用该模块作为万金油
 #截图->先根据上下文写关系->操作->反馈->成功,下一个\失败,进入防出错自寻->回到:截图
+launcher_result=run_launcher.main()
 if launcher_result[0]:
     login_res=login.main()
-    
+    if login_res[0]:
+        print('OK!')
+        

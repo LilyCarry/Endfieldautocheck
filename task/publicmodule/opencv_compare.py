@@ -81,7 +81,7 @@ def opencv_compare(input_data: list) -> list:
     # 6. 计算匹配中心并在原图还原坐标
     center_x = int(offset_x + matched_x + t_w / 2)
     center_y = int(offset_y + matched_y + t_h / 2)
-    accuracy_required = input_data[2]
+    accuracy_required = float(input_data[2])#修复float与int比较
     
     # 7. 结果判定
     if max_val >= accuracy_required:
