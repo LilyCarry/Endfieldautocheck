@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import cv2
 import numpy as np
 import os
@@ -16,11 +19,13 @@ def opencv_compare(input_data: list) -> list:
     """
     
     # 0. 路径准备
-    # 获取当前文件所在目录 (publicmodule)
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # 获取当前文件所在目录 -> 向上3层到项目根
+    current_file = os.path.abspath(__file__)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
+    
     # 定位 target_pic 和 sc 文件夹
-    target_dir = os.path.abspath(os.path.join(base_dir, "..", "..", "target_pic"))
-    sc_dir = os.path.abspath(os.path.join(base_dir, "..","..", "sc"))
+    target_dir = os.path.join(project_root, "target_pic")
+    sc_dir = os.path.join(project_root, "sc")
     
     target_path = os.path.join(target_dir, input_data[0])
     sc_path = os.path.join(sc_dir, input_data[1])
@@ -36,9 +41,8 @@ def opencv_compare(input_data: list) -> list:
         return [False, [0, 0], 0, f"{' 和 '.join(missing_files)} 不存在!"]
 
     # 2. 读取图片
-    # 使用 cv2.imread 读取图片
-    template = cv2.imread(target_path)  # 目标小图
-    full_img = cv2.imread(sc_path)      # 原始大截图
+    template = cv2.imread(target_path)
+    full_img = cv2.imread(sc_path)
     
     if template is None or full_img is None:
         return [False, [0, 0], 0, "图片读取失败，请检查格式是否损坏"]
@@ -47,14 +51,11 @@ def opencv_compare(input_data: list) -> list:
     roi_region = input_data[4]
     offset_x, offset_y = 0, 0
     
-    # 判断是否指定了有效的裁剪区域
     if roi_region[0][0] is not None and roi_region[1][0] is not None:
         try:
             x1, y1 = roi_region[0]
             x2, y2 = roi_region[1]
-            # 裁剪图片: [y_start:y_end, x_start:x_end]
             full_img = full_img[y1:y2, x1:x2]
-            # 记录偏移量，用于后续还原真实像素坐标
             offset_x, offset_y = x1, y1
             
             if full_img.size == 0:
@@ -68,16 +69,10 @@ def opencv_compare(input_data: list) -> list:
         full_img = cv2.cvtColor(full_img, cv2.COLOR_BGR2GRAY)
 
     # 5. 执行模板匹配
-    # 使用 TM_CCOEFF_NORMED (归一化相关系数匹配)，结果在 0-1 之间
     res = cv2.matchTemplate(full_img, template, cv2.TM_CCOEFF_NORMED)
-    
-    # 获取最大匹配度及其位置
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    
-    # max_loc 是匹配区域的左上角坐标 (x, y)
     matched_x, matched_y = max_loc
     
-    # 获取模板图片的宽高，用于计算中心点
     if input_data[3] == 1:
         t_h, t_w = template.shape
     else:
@@ -86,7 +81,6 @@ def opencv_compare(input_data: list) -> list:
     # 6. 计算匹配中心并在原图还原坐标
     center_x = int(offset_x + matched_x + t_w / 2)
     center_y = int(offset_y + matched_y + t_h / 2)
-    
     accuracy_required = input_data[2]
     
     # 7. 结果判定
@@ -102,15 +96,15 @@ def opencv_compare(input_data: list) -> list:
 
 # --- Debug 测试代码 ---
 if __name__ == "__main__":
-    source = input('输入目标小图')
-    target = input('输入大图')
-    val = float(input('输入精度'))
+    source = input('输入目标小图: ')
+    target = input('输入大图: ')
+    val = float(input('输入精度: '))
     test_input = [
-        f"{source}",      # 目标小图
-        f"{target}",    # 截图大图
-        val,                    # 精度
-        0,                      # 灰度开关
-        [[None, None], [None, None]] # 区域限制
+        source,
+        target,
+        val,
+        0,
+        [[None, None], [None, None]]
     ]
     
     print("正在进行 OpenCV 匹配测试...")

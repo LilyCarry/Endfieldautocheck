@@ -1,28 +1,29 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import os
 import json
 from pathlib import Path
 import ast
 from typing import Any, Dict
 
-# 默认配置字典（占位符，等待用户填充）
 DEFAULT_CONFIG: Dict[str, Any] = {
-    # 用户将在此处填充默认配置
-    "placeholder": True
+    "placeholder": True,
+    "run_max_time": 1,
+    "wait_time_s": 40,
+    "task_st": ["run_launcher", "login", "daily_check", "quit_game"],
+    "launcher_path": "C:/Endfield Game/Endfield.exe"
 }
-
 def read_config() -> Dict[str, Any]:
     """
-    从父文件夹中读取 config.json 的内容，转化为字典返回。
+    从 task/config.json 读取配置，转化为字典返回。
     如果 config.json 不存在，则使用 DEFAULT_CONFIG 创建并保存。
     """
-    # 获取当前模块所在目录的父目录
-    current_file_dir = Path(__file__).parent.resolve()
-    parent_dir = current_file_dir.parent
-    config_path = parent_dir / "config.json"
+    # 最简单的方法：当前文件在 task/publicmodule/，config.json 在 task/
+    config_path = Path(__file__).parent.parent / "config.json"
     
-    # 检查配置文件是否存在且非空（修复空文件导致的JSONDecodeError）
+    # 检查配置文件是否存在且非空
     if not config_path.exists() or config_path.stat().st_size == 0:
-        # 使用默认配置创建文件
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(DEFAULT_CONFIG, f, ensure_ascii=False, indent=4)
         print('配置文件不存在！已恢复默认')
@@ -33,7 +34,6 @@ def read_config() -> Dict[str, Any]:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
     except json.JSONDecodeError:
-        # 如果JSON损坏，备份并重建
         backup_path = config_path.with_suffix('.json.backup')
         config_path.rename(backup_path)
         print(f'配置文件损坏！已备份为 {backup_path.name}，已恢复默认')
@@ -45,13 +45,10 @@ def read_config() -> Dict[str, Any]:
 
 def save_config(config: Dict[str, Any]) -> None:
     """保存配置到 config.json"""
-    current_file_dir = Path(__file__).parent.resolve()
-    parent_dir = current_file_dir.parent
-    config_path = parent_dir / "config.json"
+    config_path = Path(__file__).parent.parent / "config.json"
     
     with open(config_path, 'w', encoding='utf-8') as f:
         json.dump(config, f, ensure_ascii=False, indent=4)
-
 def format_config_display(config: Dict[str, Any]) -> str:
     """格式化配置为显示字符串"""
     items = []
@@ -66,35 +63,21 @@ def parse_value_strict(value_str: str) -> Any:
     """
     严格解析 Python 字面量。
     如果输入不是有效的 Python 字面量，抛出 ValueError。
-    
-    支持的类型: int, float, str, bool, list, dict, tuple, set, None
-    
-    正确示例:
-        - 字符串: 'hello' 或 "hello"（必须带引号）
-        - 数字: 42, 3.14
-        - 布尔: True, False
-        - 空值: None
-        - 列表: [1, 2, 3]
-        - 字典: {'a': 1}
-        - 元组: (1, 2, 3)
     """
     value_str = value_str.strip()
     
     if not value_str:
         raise ValueError("值不能为空")
     
-    # 尝试使用 ast.literal_eval 解析
     try:
         parsed = ast.literal_eval(value_str)
         return parsed
     except (ValueError, SyntaxError) as e:
-        # 解析失败，提供详细的错误信息
         error_msg = _format_parse_error(value_str, e)
         raise ValueError(error_msg) from e
 
 def _format_parse_error(value_str: str, original_error: Exception) -> str:
-    """格式化解析错误信息，提供有用的提示"""
-    # 常见错误模式检测
+    """格式化解析错误信息"""
     if value_str.lower() in ('true', 'false'):
         return (f"布尔值必须使用 Python 格式：{value_str.lower().capitalize()}\n"
                 f"你输入的是: {value_str}")
@@ -103,19 +86,16 @@ def _format_parse_error(value_str: str, original_error: Exception) -> str:
         return (f"空值必须使用 Python 格式：None\n"
                 f"你输入的是: {value_str}")
     
-    # 检测是否忘记给字符串加引号
     if (value_str.isalpha() or 
         (value_str.replace('_', '').isalnum() and not value_str[0].isdigit())):
         return (f"字符串必须用引号包裹: '{value_str}' 或 \"{value_str}\"\n"
                 f"你输入的是: {value_str}（缺少引号）")
     
-    # 检测是否使用了 JSON 风格的 true/false/null
     if value_str in ('true', 'false', 'null'):
         return (f"请使用 Python 格式而非 JSON 格式："
                 f"True/False/None（首字母大写）\n"
                 f"你输入的是: {value_str}")
     
-    # 通用错误
     return (f"无效的 Python 字面量: {value_str}\n"
             f"错误详情: {original_error}\n"
             f"支持的类型: int, float, str(带引号), bool(True/False), "
@@ -137,7 +117,7 @@ def get_type_hint(value: Any) -> str:
     return type_names.get(type(value), type(value).__name__)
 
 def interactive_mode() -> None:
-    """交互式配置编辑模式（严格 Python 字面量模式）"""
+    """交互式配置编辑模式"""
     config = read_config()
     
     print("=== 严格模式配置编辑器 ===")
@@ -157,12 +137,10 @@ def interactive_mode() -> None:
             _print_help()
             continue
         
-        # 解析键值对（格式：key:value）
         if ':' not in user_input:
             print("❌ 格式错误！请使用 key:value 格式（用冒号分隔键和值）")
             continue
         
-        # 分割键和值（只分割第一个冒号）
         key, value_str = user_input.split(':', 1)
         key = key.strip()
         value_str = value_str.strip()
@@ -171,18 +149,15 @@ def interactive_mode() -> None:
             print("❌ 键不能为空！")
             continue
         
-        # 严格解析值
         try:
             value = parse_value_strict(value_str)
         except ValueError as e:
             print(f"❌ 解析错误：\n{e}")
             continue
         
-        # 更新配置
         old_value = config.get(key)
         config[key] = value
         
-        # 显示更新信息
         if old_value is not None:
             old_type = get_type_hint(old_value)
             new_type = get_type_hint(value)

@@ -14,8 +14,8 @@ camera = bettercam.create(output_color='RGB')
 
 def capture_window(program_info: dict) -> list:
     """
-    使用现代 DX11 (DXGI) 捕获方案重写的截图模块。
-    彻底解决黑屏问题，且速度极快。
+    切勿调用
+    已证实无效
     """
     # 1. 基础检查
     if not program_info.get('match') or program_info.get('hwnd') == 'none':
