@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # 绝对导入
-from task.publicmodule.read_config import read_config
+from task.publicmodule import read_config
 from task.publicmodule import capture_screen
 from task.publicmodule import click
 from task.publicmodule import opencv_compare as compare
@@ -20,24 +20,25 @@ from task.publicmodule import check_exist
 from task import quit_game
 
 def main():
-    config = read_config()
-    exist = check_exist.check_exist()
+    config = read_config.main()
+    exist = check_exist.main()
     run_max_time = config['run_max_time']
     path = config['launcher_path']
     wait_time_s = config['wait_time_s']
     current_time = 0
-    
     while exist and current_time <= run_max_time:#程序要一直存在
+        exist=check_exist.main()
         print(f'第{current_time+1}次尝试')
-        capture_result = capture_screen.capture_screen()#截图
+        current_time+=1
+        capture_result = capture_screen.main()#截图
         if capture_result[0]:#存在结果
             print(f"截图,路径{capture_result[1]}")
-            compare_result = compare.opencv_compare(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])#比较
+            compare_result = compare.main(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])#比较
             current_time_1 = 0
             while current_time_1 <= 10:#比10次
-                capture_result = capture_screen.capture_screen()#截图
+                capture_result = capture_screen.main()#截图
                 print(f"截图,路径{capture_result[1]}")
-                compare_result = compare.opencv_compare(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])
+                compare_result = compare.main(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])
                 print('正在等待游戏就绪')
                 print(f'次数:第{current_time_1+1}次')
                 current_time_1+=1
@@ -51,7 +52,7 @@ def main():
                 print('出现问题,正在退出')
                 return [False,"超时!"]#直接return防走到下面
             print('成功进入等待页面')
-            click.click(pos=compare_result[1],mode='click',times=5,lag=1)#点击5次
+            click.main(pos=compare_result[1],mode='click',times=5,lag=1)#点击5次
             time.sleep(5)#等5s
             #capture_result = capture_screen.capture_screen()#截图
             #tmp_compare_loading=compare.opencv_compare(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])

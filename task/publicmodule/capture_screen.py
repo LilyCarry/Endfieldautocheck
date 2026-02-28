@@ -10,7 +10,7 @@ import win32api
 import time
 from PIL import Image
 
-def capture_screen() -> list:
+def main() -> list:
     """
     截取当前主屏幕全屏。
     返回格式: [成功与否(True/False), 'path']
@@ -72,5 +72,5 @@ def capture_screen() -> list:
 if __name__ == "__main__":
     print("正在尝试全屏截图...")
     time.sleep(3)
-    res = capture_screen()
+    res = main()
     print(f"结果: {res}")

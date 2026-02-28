@@ -14,7 +14,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "task_st": ["run_launcher", "login", "daily_check", "quit_game"],
     "launcher_path": "C:/Endfield Game/Endfield.exe"
 }
-def read_config() -> Dict[str, Any]:
+def main() -> Dict[str, Any]:
     """
     从 task/config.json 读取配置，转化为字典返回。
     如果 config.json 不存在，则使用 DEFAULT_CONFIG 创建并保存。
@@ -118,7 +118,7 @@ def get_type_hint(value: Any) -> str:
 
 def interactive_mode() -> None:
     """交互式配置编辑模式"""
-    config = read_config()
+    config = main()
     
     print("=== 严格模式配置编辑器 ===")
     print("提示：所有值必须按 Python 字面量格式输入")

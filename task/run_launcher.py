@@ -12,14 +12,14 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # 绝对导入
-from task.publicmodule.capture_screen import capture_screen
-from task.publicmodule.opencv_compare import opencv_compare
-from task.publicmodule.read_config import read_config
+from task.publicmodule import capture_screen
+from task.publicmodule import opencv_compare
+from task.publicmodule import read_config
 from task.publicmodule.get_program_info import get_program_info
 
 def main():
     print('正在启动启动器...')
-    config = read_config()
+    config = read_config.main()
     run_max_time = config['run_max_time']
     path = config['launcher_path']
     wait_time_s = config['wait_time_s']

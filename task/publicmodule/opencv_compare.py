@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import os
 
-def opencv_compare(input_data: list) -> list:
+def main(input_data: list) -> list:
     """
     input_data 结构:
     [0]: 目标图片名 (target_pic 文件夹下)
@@ -108,5 +108,5 @@ if __name__ == "__main__":
     ]
     
     print("正在进行 OpenCV 匹配测试...")
-    result = opencv_compare(test_input)
+    result = main(test_input)
     print(f"返回列表: {result}")

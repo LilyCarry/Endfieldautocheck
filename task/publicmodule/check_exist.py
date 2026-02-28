@@ -13,8 +13,8 @@ if str(project_root) not in sys.path:
 # 绝对导入
 from task.publicmodule.get_program_info import get_program_info
 
-def check_exist():
+def main():
     return get_program_info('Endfield.exe')['match']
 
 if __name__ == '__main__':
-    print(check_exist())
+    print(main())

@@ -16,7 +16,7 @@ from pynput.mouse import Controller, Button
 mouse = Controller()
 
 
-def click(pos, mode='click', times=1, target_pos=None, lag=0.05):
+def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
     """
     鼠标控制函数 - 支持点击、多次点击和拖动
     
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     input("按 Enter 开始测试 (你有3秒时间将鼠标移到位)...")
     time.sleep(3)
     current_pos = get_position()
-    click(current_pos, mode='click', times=3)
+    main(current_pos, mode='click', times=3)
     time.sleep(1)
     
     # 测试2: 拖动测试
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     print("将从 (500, 500) 拖动到 (700, 700)")
     input("按 Enter 开始拖动测试 (你有3秒时间准备)...")
     time.sleep(3)
-    click([500, 500], mode='drag', times=1, target_pos=[700, 700])
+    main([500, 500], mode='drag', times=1, target_pos=[700, 700])
     time.sleep(1)
     
     # 测试3: 多次拖动
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     print("将重复2次: 从 (600, 600) 拖动到 (800, 600)")
     input("按 Enter 开始多次拖动测试 (你有3秒时间准备)...")
     time.sleep(3)
-    click([600, 600], mode='drag', times=2, target_pos=[800, 600])
+    main([600, 600], mode='drag', times=2, target_pos=[800, 600])
     
     print("\n" + "=" * 50)
     print("所有测试完成")
