@@ -27,5 +27,6 @@ def main():
         click.main(tmp_compare_res[1],mode='click')
     else:
         print('失败')
+    
 if __name__=='__main__':
     main()

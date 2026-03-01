@@ -54,10 +54,21 @@ def main():
             print('成功进入等待页面')
             click.main(pos=compare_result[1],mode='click',times=5,lag=1)#点击5次
             time.sleep(5)#等5s
-            #capture_result = capture_screen.capture_screen()#截图
-            #tmp_compare_loading=compare.opencv_compare(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
-            #tmp_compare_entered=compare.opencv_compare(['.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
-            return [True,'成功了']
+            capture_result = capture_screen.main()#截图
+            tmp_compare_loading=compare.main(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
+            tmp_times=0
+            while tmp_times<=20:
+                print('等待加载界面...')
+                time.sleep(5)
+                capture_result = capture_screen.main()#截图
+                tmp_compare_loading=compare.main(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
+                tmp_times+=1
+                if tmp_compare_loading[0]:
+                    return [True,'成功了']
+                else:
+                    print('等待加载界面超时!可能已完成')
+                    return [True,'等待加载界面超时!']
+            
         else:
             print('未知错误!')
             return [False,"似乎是capture_result出错了!"]

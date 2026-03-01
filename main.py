@@ -78,4 +78,5 @@ if launcher_result[0]:
             print('开屏签到失败!')
             if len(daily_check_result)==3:
                 print('尝试活动签到')
-                daily_check_result=daily_check_event.main()
+                #daily_check_result=daily_check_event.main()
+                #print(daily_check_result)
