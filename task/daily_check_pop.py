@@ -72,3 +72,5 @@ def main()->tuple[bool,str]|tuple[bool,str,str]:
         else:
             print('似乎没有签到弹出!')
             return (False,'首次签到超次,可能已签到或不存在活动','应该继续,所以这里有三项,为了检测len()')
+if __name__=='__main__':
+    main()

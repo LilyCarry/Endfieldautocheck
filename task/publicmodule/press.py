@@ -1,38 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-键盘模拟操作模块 - PyAutoGUI版本
+键盘模拟操作模块 - AHK版本
 功能: 模拟键盘按键操作
-依赖: pip install pyautogui
+依赖: pip install ahk
 """
 
-import pyautogui
 import time
 from typing import List
+from ahk import AHK
+
+# 初始化 AHK 实例
+ahk = AHK()
+
 
 class KeyboardSimulator:
     def __init__(self):
-        # 禁用pyautogui的安全特性（鼠标移到屏幕角落不会触发失败）
-        pyautogui.FAILSAFE = False
-        # 设置默认暂停时间
-        pyautogui.PAUSE = 0
-        
         self.special_keys = {
-            'ESC': 'esc', 'ENTER': 'return', 'SPACE': 'space',
-            'TAB': 'tab', 'BACKSPACE': 'backspace', 'DELETE': 'delete',
-            'UP': 'up', 'DOWN': 'down', 'LEFT': 'left', 'RIGHT': 'right',
-            'HOME': 'home', 'END': 'end', 'PAGE_UP': 'pageup',
-            'PAGE_DOWN': 'pagedown', 'F1': 'f1', 'F2': 'f2',
-            'F3': 'f3', 'F4': 'f4', 'F5': 'f5', 'F6': 'f6',
-            'F7': 'f7', 'F8': 'f8', 'F9': 'f9', 'F10': 'f10',
-            'F11': 'f11', 'F12': 'f12', 'CTRL': 'ctrl',
-            'SHIFT': 'shift', 'ALT': 'alt', 'CMD': 'command',
-            'CAPS_LOCK': 'capslock', 'NUM_LOCK': 'numlock',
-            'SCROLL_LOCK': 'scrolllock', 'INSERT': 'insert',
-            'PRINT_SCREEN': 'print', 'PAUSE': 'pause',
+            'ESC': 'Escape', 'ENTER': 'Enter', 'SPACE': 'Space',
+            'TAB': 'Tab', 'BACKSPACE': 'Backspace', 'DELETE': 'Delete',
+            'UP': 'Up', 'DOWN': 'Down', 'LEFT': 'Left', 'RIGHT': 'Right',
+            'HOME': 'Home', 'END': 'End', 'PAGE_UP': 'PgUp',
+            'PAGE_DOWN': 'PgDn', 'F1': 'F1', 'F2': 'F2',
+            'F3': 'F3', 'F4': 'F4', 'F5': 'F5', 'F6': 'F6',
+            'F7': 'F7', 'F8': 'F8', 'F9': 'F9', 'F10': 'F10',
+            'F11': 'F11', 'F12': 'F12', 'CTRL': 'Control',
+            'SHIFT': 'Shift', 'ALT': 'Alt', 'CMD': 'LWin',
+            'CAPS_LOCK': 'CapsLock', 'NUM_LOCK': 'NumLock',
+            'SCROLL_LOCK': 'ScrollLock', 'INSERT': 'Insert',
+            'PRINT_SCREEN': 'PrintScreen', 'PAUSE': 'Pause',
             # 添加一些常用的组合键别名
-            'WIN': 'win', 'WINDOWS': 'win', 'OPTION': 'option',
-            'CONTROL': 'ctrl', 'COMMAND': 'command',
+            'WIN': 'LWin', 'WINDOWS': 'LWin', 'OPTION': 'Alt',
+            'CONTROL': 'Control', 'COMMAND': 'LWin',
         }
 
     def _get_key(self, key_str: str):
@@ -44,18 +43,36 @@ class KeyboardSimulator:
             keys = [k.strip().upper() for k in key_str.split('+')]
             return [self._get_key(k) for k in keys]
         if len(key_str) == 1:
-            # 单字符直接返回小写
-            return key_str.lower()
+            # 单字符直接返回
+            return key_str
         raise ValueError(f"未知的按键: {key_str}")
 
     def _press_key(self, key):
         if isinstance(key, list):
-            # 组合键：按住所有修饰键，按下最后一个键，然后依次释放
-            pyautogui.keyDown(*key)
-            pyautogui.keyUp(*key)
+            # 组合键：使用 ahk.key_down 和 key_up
+            # AHK 组合键格式: ^{a} 表示 Ctrl+A
+            modifier_map = {
+                'Control': '^',
+                'Shift': '+',
+                'Alt': '!',
+                'LWin': '#'
+            }
+
+            modifiers = []
+            main_key = None
+
+            for k in key:
+                if k in modifier_map:
+                    modifiers.append(modifier_map[k])
+                else:
+                    main_key = k
+
+            if main_key:
+                hotkey_str = ''.join(modifiers) + main_key
+                ahk.key_press(hotkey_str)
         else:
             # 单键
-            pyautogui.press(key)
+            ahk.key_press(key)
 
     def simulate_keys(self, keys: List[str], times: int = 1, lag: float|int = 0):
         """

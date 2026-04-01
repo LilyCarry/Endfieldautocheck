@@ -14,6 +14,8 @@ from task import run_launcher, quit_game
 from task import login
 from task import daily_check_pop
 from task import daily_check_event
+from task.publicmodule.screen_off import turn_off_screen as off
+import subprocess as sub
 from task.publicmodule.read_config import main
 #下面是初始化:
 main_config=main()
@@ -65,18 +67,6 @@ clean_sc_folder()
 #接着,想办法回到正确的那个地方.这个自寻应该作为一个保底,在每个功能模块无法正确识别时,出现不在预期内的结果时,调用该模块作为万金油
 #截图->先根据上下文写关系->操作->反馈->成功,下一个\失败,进入防出错自寻->回到:截图
 #签到设想:第一次进入游戏会有签到界面.后面进入不会;或许需要进入event来解决.
+sub.run(['shutdown', '/s', '/t', '14000'])
+off
 launcher_result=run_launcher.main()
-if launcher_result[0]:
-    login_res=login.main()
-    if login_res[0]:
-        print('OK!')
-        print('开始尝试签到')
-        daily_check_result=daily_check_pop.main()
-        if daily_check_result[0]:
-            print('签到成功!')
-        else:
-            print('开屏签到失败!')
-            if len(daily_check_result)==3:
-                print('尝试活动签到')
-                #daily_check_result=daily_check_event.main()
-                #print(daily_check_result)
