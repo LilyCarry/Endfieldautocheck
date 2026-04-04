@@ -67,6 +67,13 @@ clean_sc_folder()
 #接着,想办法回到正确的那个地方.这个自寻应该作为一个保底,在每个功能模块无法正确识别时,出现不在预期内的结果时,调用该模块作为万金油
 #截图->先根据上下文写关系->操作->反馈->成功,下一个\失败,进入防出错自寻->回到:截图
 #签到设想:第一次进入游戏会有签到界面.后面进入不会;或许需要进入event来解决.
-sub.run(['shutdown', '/s', '/t', '14000'])
-off
+print('即将执行每日任务')
+print('你有30s时间结束进程')
+time.sleep(30)#缓口气
+sub.run(['shutdown', '/s', '/t', '1800'])
+
 launcher_result=run_launcher.main()
+off()
+if launcher_result:
+    time.sleep(60)#等一分钟
+    sub.run(['schtasks','/Run','/TN','MAA启动'])
