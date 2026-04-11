@@ -33,12 +33,12 @@ def main():
         capture_result = capture_screen.main()#截图
         if capture_result[0]:#存在结果
             print(f"截图,路径{capture_result[1]}")
-            compare_result = compare.main(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])#比较
+            compare_result = compare.main('continue.png', f'{capture_result[1]}', 0.9, 0, [[None, None], [None, None]])#比较
             current_time_1 = 0
             while current_time_1 <= 10:#比10次
                 capture_result = capture_screen.main()#截图
                 print(f"截图,路径{capture_result[1]}")
-                compare_result = compare.main(['continue.png', f'{capture_result[1]}', '0.9', '0', [[None, None], [None, None]]])
+                compare_result = compare.main('continue.png', f'{capture_result[1]}', 0.9, 0, [[None, None], [None, None]])
                 print('正在等待游戏就绪')
                 print(f'次数:第{current_time_1+1}次')
                 current_time_1+=1
@@ -55,13 +55,13 @@ def main():
             click.main(pos=compare_result[1],mode='click',times=5,lag=1)#点击5次
             time.sleep(5)#等5s
             capture_result = capture_screen.main()#截图
-            tmp_compare_loading=compare.main(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
+            tmp_compare_loading=compare.main('loading.png',f'{capture_result[1]}',0.9,0,[[None, None], [None, None]])
             tmp_times=0
             while tmp_times<=20:
                 print('等待加载界面...')
                 time.sleep(5)
                 capture_result = capture_screen.main()#截图
-                tmp_compare_loading=compare.main(['loading.png',f'{capture_result[1]}','0.9','0',[[None, None], [None, None]]])
+                tmp_compare_loading=compare.main('loading.png',f'{capture_result[1]}',0.9,0,[[None, None], [None, None]])
                 tmp_times+=1
                 if tmp_compare_loading[0]:
                     return [True,'成功了']

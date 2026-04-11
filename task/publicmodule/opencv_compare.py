@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import os
 
-def main(input_data: list) -> list:
+def main(target_pic:str,src_pic:str,acc:float|int=0.9,gray_scale:int|float=0,areas=[[None, None],[None, None]]):
     """
     input_data 结构:
     [0]: 目标图片名 (target_pic 文件夹下)
@@ -17,7 +17,7 @@ def main(input_data: list) -> list:
     返回结构:
     [True/False, [中心x, 中心y], 实际精度, '反馈信息']
     """
-    
+    input_data=[target_pic,src_pic,acc,gray_scale,areas]
     # 0. 路径准备
     # 获取当前文件所在目录 -> 向上3层到项目根
     current_file = os.path.abspath(__file__)
@@ -99,14 +99,6 @@ if __name__ == "__main__":
     source = input('输入目标小图: ')
     target = input('输入大图: ')
     val = float(input('输入精度: '))
-    test_input = [
-        source,
-        target,
-        val,
-        0,
-        [[None, None], [None, None]]
-    ]
-    
     print("正在进行 OpenCV 匹配测试...")
-    result = main(test_input)
+    result = main(source,target,val,0,[[None, None], [None, None]])
     print(f"返回列表: {result}")
