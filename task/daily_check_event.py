@@ -18,7 +18,8 @@ from task.publicmodule import press
 from task.publicmodule import check_exist
 from task.publicmodule import opencv_compare
 def main():
-    time.sleep(5)
+    pass
+    '''time.sleep(5)
     press.main(['ESC'])
     print('>')
     tmp_sc_res=capture_screen.main()
@@ -27,5 +28,6 @@ def main():
         click.main(tmp_compare_res[1],mode='click')
     else:
         print('失败')
+    '''
 if __name__=='__main__':
     main()
