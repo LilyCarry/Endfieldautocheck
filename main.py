@@ -70,7 +70,7 @@ clean_sc_folder()
 print('即将执行每日任务')
 print('你有30s时间结束进程')
 time.sleep(30)#缓口气
-sub.run(['shutdown', '/s', '/t', '1800'])
+sub.run(['shutdown', '/s', '/t', '4000'])
 
 launcher_result=run_launcher.main()
 off()
