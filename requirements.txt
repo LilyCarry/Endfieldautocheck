@@ -1,0 +1,6 @@
+js
+numpy
+Pillow
+psutil
+pywin32
+ahk[binary]

@@ -6,16 +6,48 @@
 # -*- coding: utf-8 -*-
 """
 click.py - 鼠标控制模块
-功能：实现鼠标点击、多次点击和拖动操作 (基于 ahk 重构)
-依赖: pip install ahk
+功能：实现鼠标点击、多次点击和拖动操作 (基于 SendMessage + SetCursorPos 重构)
+依赖: ctypes (Windows 内置，无需额外安装)
 """
 
 import time
-from ahk import AHK
+import ctypes
+from ctypes import wintypes
 
-# 初始化 AHK 实例
-ahk = AHK()
+# ── Windows API 常量 ──────────────────────────────────────────────
+WM_LBUTTONDOWN = 0x0201
+WM_LBUTTONUP   = 0x0202
+MK_LBUTTON     = 0x0001
 
+# ── 加载 user32.dll ───────────────────────────────────────────────
+user32 = ctypes.windll.user32
+
+
+def _get_window_at(x, y):
+    """获取屏幕坐标 (x, y) 处的窗口句柄"""
+    return user32.WindowFromPoint(wintypes.POINT(x, y))
+
+
+def _screen_to_client(hwnd, x, y):
+    """将屏幕坐标转换为指定窗口的客户区坐标"""
+    pt = wintypes.POINT(x, y)
+    user32.ScreenToClient(hwnd, ctypes.byref(pt))
+    return pt.x, pt.y
+
+
+def _send_click(hwnd, x, y, down=True):
+    """向目标窗口发送鼠标左键按下/释放消息"""
+    cx, cy = _screen_to_client(hwnd, x, y)
+    lparam = (cy << 16) | (cx & 0xFFFF)
+    if down:
+        user32.PostMessageW(hwnd, WM_LBUTTONDOWN, MK_LBUTTON, lparam)
+    else:
+        user32.PostMessageW(hwnd, WM_LBUTTONUP, 0, lparam)
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  公共接口 — 与原版完全一致的签名与返回值
+# ═══════════════════════════════════════════════════════════════════
 
 def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
     """
@@ -30,7 +62,7 @@ def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
             - mode='click'时: 点击times次
             - mode='drag'时: 重复拖动times次
         target_pos (list/None): [tx, ty] 目标位置，仅在mode='drag'时需要
-        lag:每次操作延迟秒 (int/float)
+        lag: 每次操作延迟秒 (int/float)
 
     返回:
         bool: 操作是否成功
@@ -43,14 +75,19 @@ def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
         x, y = pos
 
         if mode == 'click':
-            # 移动到指定位置
-            ahk.mouse_move(x, y, speed=10)
+            # 移动光标到指定位置
+            user32.SetCursorPos(x, y)
             time.sleep(0.05)  # 短暂延迟确保移动完成
+
+            # 获取目标窗口
+            hwnd = _get_window_at(x, y)
 
             # 执行指定次数的点击
             for _ in range(times):
-                ahk.click()
-                time.sleep(lag)  # 点击间隔
+                _send_click(hwnd, x, y, down=True)   # 按下
+                time.sleep(lag)
+                _send_click(hwnd, x, y, down=False)  # 释放
+                time.sleep(lag)
 
             print(f"已在 ({x}, {y}) 点击 {times} 次")
             return True
@@ -64,11 +101,21 @@ def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
 
             for i in range(times):
                 # 移动到起始位置
-                ahk.mouse_move(x, y, speed=10)
+                user32.SetCursorPos(x, y)
                 time.sleep(0.05)
+                hwnd_start = _get_window_at(x, y)
 
-                # 执行拖动操作
-                ahk.mouse_drag(tx, ty, relative=False)
+                # 在起始位置按下
+                _send_click(hwnd_start, x, y, down=True)
+                time.sleep(lag)
+
+                # 移动到目标位置
+                user32.SetCursorPos(tx, ty)
+                time.sleep(0.05)
+                hwnd_end = _get_window_at(tx, ty)
+
+                # 在目标位置释放
+                _send_click(hwnd_end, tx, ty, down=False)
                 time.sleep(lag)
 
                 if times > 1:
@@ -91,14 +138,14 @@ def main(pos, mode='click', times=1, target_pos=None, lag=0.05):
 
 def get_position():
     """获取当前鼠标位置"""
-    # ahk.mouse_position 返回坐标对象，转为 list 保持原输入输出一致
-    pos = ahk.mouse_position
-    return [pos.x, pos.y]
+    pt = wintypes.POINT()
+    user32.GetCursorPos(ctypes.byref(pt))
+    return [pt.x, pt.y]
 
 
 def move_to(x, y):
     """移动鼠标到指定位置"""
-    ahk.mouse_move(x, y, speed=10)
+    user32.SetCursorPos(x, y)
     print(f"鼠标已移动到 ({x}, {y})")
 
 
@@ -115,4 +162,4 @@ if __name__ == '__main__':
     input("按 Enter 开始测试 (你有3秒时间将鼠标移到位)...")
     time.sleep(3)
     current_pos = get_position()
-    main(current_pos, mode='click', times=2,lag=0.5)
+    main(current_pos, mode='click', times=2)
