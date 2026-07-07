@@ -19,6 +19,7 @@ import subprocess as sub
 from task.publicmodule.read_config import main
 #下面是初始化:
 main_config=main()
+debug=False
 task_st=main_config['task_st']
 #清除sc缓存
 
@@ -68,12 +69,16 @@ clean_sc_folder()
 #截图->先根据上下文写关系->操作->反馈->成功,下一个\失败,进入防出错自寻->回到:截图
 #签到设想:第一次进入游戏会有签到界面.后面进入不会;或许需要进入event来解决.
 print('即将执行每日任务')
-print('你有30s时间结束进程')
-time.sleep(30)#缓口气
-sub.run(['shutdown', '/s', '/t', '4000'])
+if not debug:
+    print('你有30s时间结束进程')
+    time.sleep(30)#缓口气
+    sub.run(['shutdown', '/s', '/t', '4000'])
 
-launcher_result=run_launcher.main()
-off()
-if launcher_result:
-    time.sleep(60)#等一分钟
+    launcher_result=run_launcher.main()
+    off()
+    if launcher_result:
+        time.sleep(60)#等一分钟
+        sub.run(['schtasks','/Run','/TN','MAA启动'])
+else: 
+    launcher_result=run_launcher.main()
     sub.run(['schtasks','/Run','/TN','MAA启动'])
