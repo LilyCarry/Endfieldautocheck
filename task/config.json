@@ -1,5 +1,4 @@
 {
-    "placeholder": false,
     "run_max_time": 1,
     "wait_time_s": 40,
     "task_st": [
@@ -8,5 +7,5 @@
         "daily_check",
         "quit_game"
     ],
-    "launcher_path": "C:/Endfield Game/Endfield.exe"
+    "launcher_path": r"C:\Program Files\Arknights Endfield bilibili\games\Arknights Endfield\Endfield.exe"
 }

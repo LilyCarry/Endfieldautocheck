@@ -8,7 +8,6 @@ import ast
 from typing import Any, Dict
 
 DEFAULT_CONFIG: Dict[str, Any] = {
-    "placeholder": True,
     "run_max_time": 1,
     "wait_time_s": 40,
     "task_st": ["run_launcher", "login", "daily_check", "quit_game"],
